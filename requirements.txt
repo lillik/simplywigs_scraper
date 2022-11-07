@@ -1,0 +1,5 @@
+pip==22.3
+setuptools==65.5.1
+wheel==0.38.1
+beautifulsoup4==4.11.1
+requests==2.28.1
