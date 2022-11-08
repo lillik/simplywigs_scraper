@@ -48,16 +48,21 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 
 csv_header = ["sku", "store_view_code", "attribute_set_code", "product_type", "categories", "name", "description",
               "short_description", "visibility", "price", "base_image", "small_image", "thumbnail_image",
-              "swatch_image", "additional_attributes", "qty", "is_in_stock", "product_websites", "additional_images",
-              "configurable_variations", "associated_skus"]
+              "swatch_image", "additional_attributes", "qty", "is_in_stock", "websites_id", "additional_images",
+              "configurable_variations", "associated_skus", "color", "product_websites", "status", "state"]
 
 
 def scrap():
-    file = open('data-simply-supreme.csv', 'w')
-    writer = csv.writer(file)
-    writer.writerow(csv_header)
+    # file = open('data-simply-supreme.csv', 'w')
+    # writer = csv.writer(file)
+    # writer.writerow(csv_header)
 
     for k, v in brands.items():
+
+        file = open(f'data-{k}.csv', 'w')
+        writer = csv.writer(file)
+        writer.writerow(csv_header)
+
         product_urls = get_all_products_by_brand_code(k)
         for product_url in product_urls:
             print(f"Scrap page {product_url}")
@@ -80,7 +85,7 @@ def scrap():
                 price = product_soup.find("span", {"class": "price-including-tax"}) \
                     .text.replace('£', "") \
                     .replace('inc. VAT', "").strip()
-                price = math.ceil(float(price) * 5.71 * 100)
+                price = round(float(price)*5.71, 2)
             except:
                 price = None
 
@@ -113,7 +118,7 @@ def scrap():
             for associated_product in get_associated_products(product_soup, associated_skus):
                 product_row = [
                     associated_product.sku,
-                    "default",
+                    "peruci_profesionale",
                     "Default",
                     "simple",
                     f"Shop/Peruci Femei/Gisela Mayer/{brands[k]}",
@@ -129,17 +134,21 @@ def scrap():
                     "",
                     100,
                     1,
-                    "peruci_profesionale",
+                    1,
                     associated_product.img,
                     "",
-                    ""
+                    "",
+                    associated_product.name,
+                    "peruci_profesionale",
+                    1,
+                    1
                 ]
                 writer.writerow(product_row)
                 configurable_variations.append(associated_product.as_configurable_variation())
 
             product_row = [
                 sku,
-                "default",
+                "",
                 "Default",
                 "configurable",
                 f"Shop/Peruci Femei/Gisela Mayer/{brands[k]}",
@@ -155,10 +164,14 @@ def scrap():
                 "",
                 100,
                 1,
-                "peruci_profesionale",
+                1,
                 ",".join(images),
                 "|".join(configurable_variations),
-                ",".join(associated_skus)
+                ",".join(associated_skus),
+                "",
+                "peruci_profesionale",
+                1,
+                1
             ]
             writer.writerow(product_row)
 
