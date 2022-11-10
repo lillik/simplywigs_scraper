@@ -186,10 +186,10 @@ def get_associated_products(product_soup: BeautifulSoup, associated_skus: []) ->
             simple_product_description = simple_product.find("div", {"class": "modal-shop"}).find("p").text
             products.append(
                 AssociatedProduct(
-                    associated_sku,
-                    simple_product_name,
-                    simple_product_img,
-                    simple_product_description
+                    associated_sku.strip(),
+                    simple_product_name.strip().replace(",", ""),
+                    simple_product_img.strip(),
+                    simple_product_description.strip()
                 )
             )
 
